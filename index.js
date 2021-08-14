@@ -64,5 +64,42 @@ OurApp.get("/book/aut/:author", (request, response) => {
     response.json({ book: getBook })
 });
 
+// Route    - /authors
+// Des      - to get all authors
+// Access   - Public
+// Method   - GET
+// Params   - none
+// Body     - none
+OurApp.get("/authors", (request, response) => {
+    response.json({ authors: Database.Author })
+});
+
+// Route    - /authors/aut/:author_
+// Des      - to get specific author
+// Access   - Public
+// Method   - GET
+// Params   - author
+// Body     - none
+OurApp.get("/authors/aut/:author_", (request, response) => {
+    const getAuthor = Database.Author.filter(
+        (author) => author.id == parseInt(request.params.author_)
+    );
+    
+    response.json({ book: getAuthor })
+});
+
+// Route    - /authors/book/:book
+// Des      - to get list of author based on a book
+// Access   - Public
+// Method   - GET
+// Params   - author
+// Body     - none
+OurApp.get("/authors/book/:book", (request, response) => {
+    const getAuthor = Database.Author.filter(
+        (author) => author.books.includes(request.params.book)
+    );
+    
+    response.json({ book: getAuthor })
+});
 
 OurApp.listen(5000, () => console.log("Server is running"));
