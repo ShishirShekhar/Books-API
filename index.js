@@ -12,6 +12,8 @@ OurApp.get("/", (request, response) => {
     response.json({ message: "Server is working!!!"})
 });
 
+/* ------------------------ GET APIs -------------------------- */
+
 // Route    - /book
 // Des      - to get all books
 // Access   - Public
@@ -101,5 +103,45 @@ OurApp.get("/authors/book/:book", (request, response) => {
     
     response.json({ book: getAuthor })
 });
+
+// Route    - /publication
+// Des      - to get all publication
+// Access   - Public
+// Method   - GET
+// Params   - none
+// Body     - none
+OurApp.get("/publication", (request, response) => {
+    response.json({ publications: Database.Publication })
+});
+
+// Route    - /publication/pub/:pub_
+// Des      - to get specific publication
+// Access   - Public
+// Method   - GET
+// Params   - author
+// Body     - none
+OurApp.get("/publication/pub/:pub_", (request, response) => {
+    const getPublication = Database.Author.filter(
+        (pub) => pub.id == parseInt(request.params.pub_)
+    );
+    
+    response.json({ book: getPublication })
+});
+
+// Route    - /publication/book/:book_
+// Des      - to get a list of publication based on a book
+// Access   - Public
+// Method   - GET
+// Params   - author
+// Body     - none
+OurApp.get("/publication/book/:book_", (request, response) => {
+    const getPublication = Database.Author.filter(
+        (pub) => pub.books.includes(request.params.book_)
+    );
+    
+    response.json({ book: getPublication })
+});
+
+/* ------------------------ POST APIs -------------------------- */
 
 OurApp.listen(5000, () => console.log("Server is running"));

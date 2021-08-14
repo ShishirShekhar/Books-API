@@ -57,9 +57,9 @@ Author
 
 Publication
     - GET
-        - to get all publication 🔥
-        - to get specific publication 🔥
-        - to get a list of publication based on a book. 🔥
+        - to get all publication ✅
+        - to get specific publication ✅
+        - to get a list of publication based on a book. ✅
 
     - POST
         - Add a new publication
