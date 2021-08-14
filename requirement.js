@@ -25,9 +25,9 @@ Publication
 Book
     - GET
         - to get all books ✅
-        - to get specific book
-        - to get a list of books based on category
-        - to get a list of books based on author
+        - to get specific book ✅
+        - to get a list of books based on category ✅
+        - to get a list of books based on author ✅
 
     - POST
         - to add new books
