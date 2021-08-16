@@ -118,10 +118,10 @@ OurApp.get("/publication", (request, response) => {
 // Des      - to get specific publication
 // Access   - Public
 // Method   - GET
-// Params   - author
+// Params   - publication
 // Body     - none
 OurApp.get("/publication/pub/:pub_", (request, response) => {
-    const getPublication = Database.Author.filter(
+    const getPublication = Database.Publication.filter(
         (pub) => pub.id == parseInt(request.params.pub_)
     );
     
@@ -132,10 +132,10 @@ OurApp.get("/publication/pub/:pub_", (request, response) => {
 // Des      - to get a list of publication based on a book
 // Access   - Public
 // Method   - GET
-// Params   - author
+// Params   - book
 // Body     - none
 OurApp.get("/publication/book/:book_", (request, response) => {
-    const getPublication = Database.Author.filter(
+    const getPublication = Database.Publication.filter(
         (pub) => pub.books.includes(request.params.book_)
     );
     
@@ -143,5 +143,9 @@ OurApp.get("/publication/book/:book_", (request, response) => {
 });
 
 /* ------------------------ POST APIs -------------------------- */
+/* ------------------------ PUT APIs -------------------------- */
+/* ------------------------ DELETE APIs -------------------------- */
 
+
+// Hosting
 OurApp.listen(5000, () => console.log("Server is running"));
