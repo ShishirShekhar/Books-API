@@ -143,7 +143,43 @@ OurApp.get("/publication/book/:book_", (request, response) => {
 });
 
 /* ------------------------ POST APIs -------------------------- */
+
+// Route    - /book/new
+// Des      - to add new books
+// Access   - Public
+// Method   - POST
+// Params   - none
+// Body     - ????
+
+OurApp.post("/book/new", (request, response) => {
+    response.json({message: "Book added successfully"})
+});
+
+// Route    - /authors/new
+// Des      - to add new author
+// Access   - Public
+// Method   - POST
+// Params   - none
+// Body     - ????
+
+OurApp.post("/authors/new", (request, response) => {
+    response.json({message: "Author added successfully"})
+});
+
+// Route    - /publication/new
+// Des      - to add new publication
+// Access   - Public
+// Method   - POST
+// Params   - none
+// Body     - ????
+
+OurApp.post("/publication/new", (request, response) => {
+    response.json({message: "publication added successfully"})
+});
+
 /* ------------------------ PUT APIs -------------------------- */
+
+
 /* ------------------------ DELETE APIs -------------------------- */
 
 

@@ -30,7 +30,7 @@ Book
         - to get a list of books based on author ✅
 
     - POST
-        - to add new books
+        - to add new books ✅
 
     - PUT
         - update book details
@@ -47,7 +47,7 @@ Author
         - to get list of author based on a book ✅
 
     - POST
-        - to add new author
+        - to add new author ✅
 
     - PUT
         - update author details
@@ -62,7 +62,7 @@ Publication
         - to get a list of publication based on a book. ✅
 
     - POST
-        - Add a new publication
+        - Add a new publication ✅
 
     - PUT
         - update publication
