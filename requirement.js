@@ -37,8 +37,8 @@ Book
         - to update/add new author ✅
 
     - DELETE
-        - delete a book
-        - delete an author from the book
+        - delete a book ✅
+        - delete an author from the book ✅
 
 Author
     - GET
@@ -53,7 +53,7 @@ Author
         - update author details ✅
 
     - DELETE
-        - delete an author
+        - delete an author ✅
 
 Publication
     - GET
@@ -69,7 +69,7 @@ Publication
         - to update/add new book ✅
 
     - DELETE
-        - delete a book from publication
-        - delete a publication
+        - delete a publication ✅
+        - delete a book from publication ✅
 
 */

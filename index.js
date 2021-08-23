@@ -1,7 +1,8 @@
 const { response } = require("express");
 const express = require("express");
 const { request } = require("http");
-const { join } = require("path");
+const { join, parse } = require("path");
+const { DefaultSerializer } = require("v8");
 
 // Import database
 const Database = require("./database");
@@ -194,9 +195,10 @@ OurApp.post("/publication/new", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - isbn
+// Body     - { "updatedBook": { details } }
 
 OurApp.put("/book/update/:isbn", (request, response) => {
-    const updatedBook = request.body;
+    const { updatedBook } = request.body;
 
     Database.Book.map((book) => {
         if (book.ISBN === request.params.isbn) {
@@ -209,7 +211,7 @@ OurApp.put("/book/update/:isbn", (request, response) => {
             book.publication = updatedBook.publication;
         }
     });
-    response.json({ message: Database.Book });
+    response.json({ book: Database.Book });
 });
 
 // Route    - /book/updateAuthour/:isbn
@@ -217,6 +219,7 @@ OurApp.put("/book/update/:isbn", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - isbn
+// Body     - { "newAuthor": id }
 
 OurApp.put("/book/updateAuthour/:isbn", (request, response) => {
     const newAuthor = parseInt(request.body.author);
@@ -246,10 +249,11 @@ OurApp.put("/book/updateAuthour/:isbn", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - id
+// Body     - { "updatedDetails": { details } }
 
 OurApp.put("/authors/update/:id", (request, response) => {
 
-    const updatedDetails = request.body;
+    const { updatedDetails } = request.body;
     
     Database.Author.map((author) => {
         if (author.id == request.params.id) {
@@ -258,7 +262,7 @@ OurApp.put("/authors/update/:id", (request, response) => {
         }
     });
 
-    response.json({ message: Database.Author })
+    response.json({ author: Database.Author })
 });
 
 // Route    - /publication/update/:id
@@ -266,10 +270,11 @@ OurApp.put("/authors/update/:id", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - id
+// Body     - { "updatedDetails": { details } }
 
 OurApp.put("/publication/update/:id", (request, response) => {
 
-    const updatedDetails = request.body;
+    const { updatedDetails } = request.body;
     
     Database.Publication.map((pub) => {
         if (pub.id == request.params.id) {
@@ -277,7 +282,7 @@ OurApp.put("/publication/update/:id", (request, response) => {
             pub.books = updatedDetails.books;
         }
     });
-    response.json({ message: Database.Publication });
+    response.json({ publication: Database.Publication });
 });
 
 // Route    - /publication/updateBook/:id
@@ -285,6 +290,7 @@ OurApp.put("/publication/update/:id", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - id
+// Body     - { "books": ISBN }
 
 OurApp.put("/publication/updateBook/:id", (request, response) => {
 
@@ -303,11 +309,150 @@ OurApp.put("/publication/updateBook/:id", (request, response) => {
             book.publication = request.params.id;
         }
     });
-    response.json({ pub: Database.Publication, book: Database.Book });
+    response.json({ publication: Database.Publication, book: Database.Book });
 });
 
 /* ------------------------ DELETE APIs -------------------------- */
 
+// Route    - /book/deleteBook/:BookID
+// Des      - to get specific book
+// Access   - Public
+// Method   - DELETE
+// Params   - bookID
+// Body     - none
+
+OurApp.delete("/book/deleteBook/:BookID", (request, response) => {
+    
+    const isbn = request.params.BookID;
+
+    Database.Book = Database.Book.filter((book) => {
+        return book.ISBN !== isbn;
+    });
+
+    Database.Author.map((author) => {
+        if (author.books.includes(isbn)) {
+            author.books.pop(isbn);
+        }
+    });
+
+    Database.Publication.map((pub) => {
+        if (pub.books.includes(isbn)) {
+            pub.books.pop(isbn);
+        }
+    });
+
+    response.json({ book: Database.Book, author: Database.Author, publication: Database.Publication });
+});
+
+// Route    - /book/deleteAuthor/:BookID/:authorID
+// Des      - delete an author from the book
+// Access   - Public
+// Method   - DELETE
+// Params   - bookID, authorID
+// Body     - none
+
+OurApp.delete("/book/deleteAuthor/:BookID/:authorID", (request, response) => {
+    const isbn = request.params.BookID;
+    const author_ = parseInt(request.params.authorID);
+
+    Database.Book.map((book) => {
+        if (book.ISBN === isbn) {
+            if (book.authors.includes(author_)) {
+                const index = book.authors.indexOf(author_);
+                book.authors.splice(index, 1);
+            }
+        }
+    });
+
+    Database.Author.map((author) => {
+        if (author.id === author_) {
+            if (author.books.includes(isbn)) {
+                const index = author.books.indexOf(isbn);
+                author.books.splice(index, 1);
+            }
+        }
+    });
+
+    response.json({ book: Database.Book, author: Database.Author });
+});
+
+// Route    - /author/delete/:authorID
+// Des      - delete an author
+// Access   - Public
+// Method   - DELETE
+// Params   - authorID
+// Body     - none
+
+OurApp.delete("/author/delete/:authorID", (request, response) => {
+    const id = parseInt(request.params.authorID);
+
+    Database.Author = Database.Author.filter((author) => {
+        return author.id !== id;
+    });
+
+    Database.Book.map((book) => {
+        if (book.authors.includes(id)) {
+            const index = book.authors.indexOf(id);
+            book.authors.splice(index, 1);
+        }
+    });
+
+    response.json({ author: Database.Author, book: Database.Book });
+});
+
+// Route    - /publication/delete/:publicationId
+// Des      - delete a publication
+// Access   - Public
+// Method   - DELETE
+// Params   - publicationID
+// Body     - none
+
+OurApp.delete("/publication/delete/:publicationId", (request, response) => {
+    const id = parseInt(request.params.publicationId);
+
+    Database.Publication = Database.Publication.filter((pub) => {
+        return pub.id !== id;
+    });
+
+    Database.Book.map((book) => {
+        if (book.publication === id) {
+            book.publication = -1;
+        }
+    });
+
+    response.json({ publication: Database.Publication, book: Database.Book });
+});
+
+// Route    - /publication/deleteBook/:publicationId/:bookId
+// Des      - delete a book from publication
+// Access   - Public
+// Method   - DELETE
+// Params   - publicationID, bookID
+// Body     - none
+
+OurApp.delete("/publication/deleteBook/:publicationId/:bookId", (request, response) => {
+    const id = parseInt(request.params.publicationId);
+    const isbn = request.params.bookId;
+
+    Database.Publication.map((pub) => {
+        if (pub.id === id) {
+            if (pub.books.includes(isbn)) {
+                const index = pub.books.indexOf(isbn);
+                pub.books.splice(isbn, 1);
+            }
+        }
+    });
+
+    Database.Book.map((book) => {
+        if (book.ISBN === isbn) {
+            if (book.publication === id) {
+                book.publication = -1;
+            }
+        }
+    });
+
+    response.json({ publication: Database.Publication, book: Database.Book })
+});
 
 // Hosting
 OurApp.listen(5000, () => console.log("Server is running"));
