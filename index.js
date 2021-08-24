@@ -343,13 +343,15 @@ OurApp.delete("/book/deleteBook/:BookID", (request, response) => {
 
     Database.Author.map((author) => {
         if (author.books.includes(isbn)) {
-            author.books.pop(isbn);
+            const index = author.books.indexOf(isbn)
+            author.books.splice(index, 1);
         }
     });
 
     Database.Publication.map((pub) => {
         if (pub.books.includes(isbn)) {
-            pub.books.pop(isbn);
+            const index = pub.books.indexOf(isbn);
+            pub.books.splice(index, 1);
         }
     });
 
