@@ -11,6 +11,7 @@ const Publication = require("./schema/publication");
 
 // Import database
 const Database = require("./database");
+const { update } = require("./schema/book");
 
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -268,23 +269,16 @@ OurApp.post("/publication/new", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - isbn
-// Body     - "title: newTtile"
+// Body     - { title: newTtile }
 
-OurApp.put("/book/update/:isbn", (request, response) => {
-    const { updatedBook } = request.body;
+OurApp.put("/book/update/:isbn", async (request, response) => {
+    const updatedBook = await Book.findOneAndUpdate(
+        { ISBN: request.params.isbn },
+        { title: request.body.title },
+        { new: true }
+    );
 
-    Database.Book.map((book) => {
-        if (book.ISBN === request.params.isbn) {
-            book.title = updatedBook.title;
-            book.authors = updatedBook.authors;
-            book.language = updatedBook.language;
-            book.pubDate = updatedBook.pubDate;
-            book.numOfPage = updatedBook.numOfPage;
-            book.category = updatedBook.category;
-            book.publication = updatedBook.publication;
-        }
-    });
-    response.json({ book: Database.Book });
+    return response.json(updatedBook);
 });
 
 // Route    - /book/updateAuthour/:isbn
@@ -294,27 +288,20 @@ OurApp.put("/book/update/:isbn", (request, response) => {
 // Params   - isbn
 // Body     - { "newAuthor": id }
 
-OurApp.put("/book/updateAuthour/:isbn", (request, response) => {
-    const newAuthor = parseInt(request.body.author);
-    const isbn = request.params.isbn;
+OurApp.put("/book/updateAuthour/:isbn", async (request, response) => {
+    const updatedBook = await Book.findOneAndUpdate(
+        { ISBN: request.params.isbn },
+        { $addToSet: { authors: request.body.newAuthor } },
+        { new: true }
+    );
 
-    Database.Book.map((book) => {
-        if (book.ISBN === isbn) {
-           if (!book.authors.includes(newAuthor)) {
-                book.authors.push(newAuthor);
-           }
-        }
-    });
+    const updatedAuthor = await Author.findOneAndUpdate(
+        { id: request.body.newAuthor },
+        { $addToSet: { books: request.params.isbn } },
+        { new: true }
+    );
 
-    Database.Author.map((author) => {
-        if (author.id == newAuthor) {
-            if (!author.book.includes(isbn)) {
-                author.book.push(isbn);
-            }
-        }
-    });
-
-    response.json({ book: Database.Book, author: Database.Author });
+    return response.json({ book: updatedBook, author: updatedAuthor });
 });
 
 // Route    - /authors/update/:id
@@ -322,20 +309,16 @@ OurApp.put("/book/updateAuthour/:isbn", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - id
-// Body     - { "updatedDetails": { details } }
+// Body     - { "name": { newName } }
 
-OurApp.put("/authors/update/:id", (request, response) => {
+OurApp.put("/authors/update/:id", async (request, response) => {
+    const updatedAuthor = await Author.findOneAndUpdate(
+        { id: parseInt(request.params.id) },
+        { name: request.body.name },
+        { new: true }
+    );
 
-    const { updatedDetails } = request.body;
-    
-    Database.Author.map((author) => {
-        if (author.id == request.params.id) {
-            author.name = updatedDetails.name;
-            author.books = updatedDetails.books;
-        }
-    });
-
-    response.json({ author: Database.Author })
+    return response.json(updatedAuthor);
 });
 
 // Route    - /publication/update/:id
@@ -343,19 +326,16 @@ OurApp.put("/authors/update/:id", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - id
-// Body     - { "updatedDetails": { details } }
+// Body     - { "name": { newName } }
 
-OurApp.put("/publication/update/:id", (request, response) => {
+OurApp.put("/publication/update/:id", async (request, response) => {
+    const updatedPublication = await Publication.findOneAndUpdate(
+        { id: parseInt(request.params.id) },
+        { name: request.body.name },
+        { new: true }
+    );
 
-    const { updatedDetails } = request.body;
-    
-    Database.Publication.map((pub) => {
-        if (pub.id == request.params.id) {
-            pub.name = updatedDetails.name;
-            pub.books = updatedDetails.books;
-        }
-    });
-    response.json({ publication: Database.Publication });
+    return response.json(updatedPublication);
 });
 
 // Route    - /publication/updateBook/:id
@@ -363,26 +343,22 @@ OurApp.put("/publication/update/:id", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - id
-// Body     - { "books": ISBN }
+// Body     - { "book": ISBN }
 
-OurApp.put("/publication/updateBook/:id", (request, response) => {
+OurApp.put("/publication/updateBook/:id", async (request, response) => {
+    const updatedPublication = await Publication.findOneAndUpdate(
+        { id: parseInt(request.params.id) },
+        { $addToSet: { books: request.body.book } },
+        { new: true }
+    );
+    
+    const updatedBook = await Book.findOneAndUpdate(
+        { ISBN: request.body.book },
+        { publication: parseInt(request.params.id) },
+        { new: true }
+    );
 
-    const book_ = request.body.books;
-
-    Database.Publication.map((pub) => {
-        if (pub.id == request.params.id) {
-            if (!pub.books.includes(book_)){
-                pub.books.push(book_);
-            }
-        }
-    });
-
-    Database.Book.map((book) => {
-        if (book.ISBN === book_) {
-            book.publication = request.params.id;
-        }
-    });
-    response.json({ publication: Database.Publication, book: Database.Book });
+    return response.json({ publication: updatedPublication, book: updatedBook });
 });
 
 /* ------------------------ DELETE APIs -------------------------- */

@@ -215,7 +215,7 @@ Author
     Access   - Public
     Method   - PUT
     Params   - id
-    Body     - { "updatedDetails": { details } }
+    Body     - { "name": { newName } }
    
 Publication
 
@@ -224,14 +224,14 @@ Publication
     Access   - Public
     Method   - PUT
     Params   - id
-    Body     - { "updatedDetails": { details } }
+    Body     - { "name": { newName } }
 
     Route    - /publication/updateBook/:id
     Des      - to update/add new book
     Access   - Public
     Method   - PUT
     Params   - id
-    Body     - { "books": ISBN }
+    Body     - { "book": ISBN }
 
 /* ------------------------ DELETE APIs -------------------------- */
 
