@@ -64,7 +64,7 @@ OurApp.get("/book/:bookID", async (request, response) => {
     return response.json(getSpecificBook);
 });
 
-// Route    - /book/cat/category
+// Route    - /book/cat/:category
 // Des      - to get a list of books based on category
 // Access   - Public
 // Method   - GET
@@ -83,7 +83,7 @@ OurApp.get("/book/cat/:category", async (request, response) => {
     return response.json(getSpecificBook);
 });
 
-// Route    - /book/aut/author
+// Route    - /book/aut/:author
 // Des      - to get a list of books based on author
 // Access   - Public
 // Method   - GET
@@ -191,11 +191,11 @@ OurApp.get("/publication/pub/:pub_", async (request, response) => {
 // Body     - none
 
 OurApp.get("/publication/book/:book_", async (request, response) => {
-    const getSpecificPublication = await Publication.findOne({books: request.params.book});
+    const getSpecificPublication = await Publication.findOne({books: request.params.book_});
 
     if (!getSpecificPublication) {
         return response.json({
-            error: `No publication found for the book ${request.params.book}`
+            error: `No publication found for the book ${request.params.book_}`
     });
     }
 
@@ -209,10 +209,11 @@ OurApp.get("/publication/book/:book_", async (request, response) => {
 // Access   - Public
 // Method   - POST
 // Params   - none
+// Body     - { newBook : { details } }
 
 OurApp.post("/book/new", (request, response) => {
     try {
-        const newBook = request.body;
+        const { newBook } = request.body;
 
         Book.create(newBook);
         return response.json({ message: "Book added to the database" });
@@ -227,9 +228,18 @@ OurApp.post("/book/new", (request, response) => {
 // Access   - Public
 // Method   - POST
 // Params   - none
+// Body     - { newAuthor: { details } }
 
 OurApp.post("/authors/new", (request, response) => {
-    response.json({message: "Author added successfully"})
+    try {
+        const { newAuthor } = request.body;
+
+        Author.create(newAuthor);
+        return response.json({ message: "Author added to the database" });
+    }
+    catch(error) {
+        return response.json({ error: error.message });
+    }
 });
 
 // Route    - /publication/new
@@ -237,9 +247,18 @@ OurApp.post("/authors/new", (request, response) => {
 // Access   - Public
 // Method   - POST
 // Params   - none
+// Body     - { newPublication: { details } }
 
 OurApp.post("/publication/new", (request, response) => {
-    response.json({message: "publication added successfully"})
+    try {
+        const { newPublication } = request.body;
+
+        Publication.create(newPublication);
+        return response.json({ message: "Publication added to the database" });
+    }
+    catch(error) {
+        return response.json({ error: error.message });
+    }
 });
 
 /* ------------------------ PUT APIs -------------------------- */
