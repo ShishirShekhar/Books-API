@@ -268,7 +268,7 @@ OurApp.post("/publication/new", (request, response) => {
 // Access   - Public
 // Method   - PUT
 // Params   - isbn
-// Body     - { "updatedBook": { details } }
+// Body     - "title: newTtile"
 
 OurApp.put("/book/update/:isbn", (request, response) => {
     const { updatedBook } = request.body;
