@@ -117,21 +117,21 @@ Book
     
 Author
 
-    Route    - /authors
+    Route    - /author
     Des      - to get all authors
     Access   - Public
     Method   - GET
     Params   - none
     Body     - none
 
-    Route    - /authors/aut/:author_
+    Route    - /author/aut/:author_
     Des      - to get specific author
     Access   - Public
     Method   - GET
     Params   - author
     Body     - none
 
-    Route    - /authors/book/:book
+    Route    - /author/book/:book
     Des      - to get list of author based on a book
     Access   - Public
     Method   - GET
@@ -174,7 +174,7 @@ Book
     
 Author
 
-    Route    - /authors/new
+    Route    - /author/new
     Des      - to add new author
     Access   - Public
     Method   - POST
@@ -195,7 +195,7 @@ Publication
 Book
 
     Route    - /book/update/:isbn
-    Des      - update book details
+    Des      - update book title
     Access   - Public
     Method   - PUT
     Params   - isbn
@@ -210,7 +210,7 @@ Book
     
 Author
 
-    Route    - /authors/update/:id
+    Route    - /author/update/:id
     Des      - update author details
     Access   - Public
     Method   - PUT
