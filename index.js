@@ -5,14 +5,12 @@ const mongoose = require("mongoose");
 require('dotenv').config()
 
 // Import Schema's
-const Book = require("./schema/book");
-const Author = require("./schema/author");
-const Publication = require("./schema/publication");
+const BookModel = require("./schema/book");
+const AuthorModel = require("./schema/author");
+const PublicationModel = require("./schema/publication");
 
 // Import database
 const Database = require("./database");
-const { update } = require("./schema/book");
-
 
 mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
@@ -42,7 +40,7 @@ OurApp.get("/", (request, response) => {
 // Body     - none
 
 OurApp.get("/book", async (request, response) => {
-    const getAllBooks = await Book.find();
+    const getAllBooks = await BookModel.find();
     return response.json(getAllBooks);
 });
 
@@ -54,7 +52,7 @@ OurApp.get("/book", async (request, response) => {
 // Body     - none
 
 OurApp.get("/book/:bookID", async (request, response) => {
-    const getSpecificBook = await Book.findOne({ISBN: request.params.bookID});
+    const getSpecificBook = await BookModel.findOne({ISBN: request.params.bookID});
 
     if (!getSpecificBook) {
         return response.json({
@@ -73,7 +71,7 @@ OurApp.get("/book/:bookID", async (request, response) => {
 // Body     - none
 
 OurApp.get("/book/cat/:category", async (request, response) => {
-    const getSpecificBook = await Book.findOne({category: request.params.category});
+    const getSpecificBook = await BookModel.findOne({category: request.params.category});
 
     if (!getSpecificBook) {
         return response.json({
@@ -92,7 +90,7 @@ OurApp.get("/book/cat/:category", async (request, response) => {
 // Body     - none
 
 OurApp.get("/book/aut/:author", async (request, response) => {
-    const getSpecificBook = await Book.findOne({authors: parseInt(request.params.author)});
+    const getSpecificBook = await BookModel.findOne({authors: parseInt(request.params.author)});
 
     if (!getSpecificBook) {
         return response.json({
@@ -111,7 +109,7 @@ OurApp.get("/book/aut/:author", async (request, response) => {
 // Body     - none
 
 OurApp.get("/authors", async (request, response) => {
-    const getAllAuthors = await Author.find();
+    const getAllAuthors = await AuthorModel.find();
     return response.json(getAllAuthors);
 });
 
@@ -123,7 +121,7 @@ OurApp.get("/authors", async (request, response) => {
 // Body     - none
 
 OurApp.get("/authors/aut/:author_", async (request, response) => {
-    const getSpecificAuthor = await Author.findOne({id: parseInt(request.params.author_)});
+    const getSpecificAuthor = await AuthorModel.findOne({id: parseInt(request.params.author_)});
 
     if (!getSpecificAuthor) {
         return response.json({
@@ -142,7 +140,7 @@ OurApp.get("/authors/aut/:author_", async (request, response) => {
 // Body     - none
 
 OurApp.get("/authors/book/:book", async (request, response) => {
-    const getSpecificAuthor = await Author.findOne({books: request.params.book});
+    const getSpecificAuthor = await AuthorModel.findOne({books: request.params.book});
 
     if (!getSpecificAuthor) {
         return response.json({
@@ -161,7 +159,7 @@ OurApp.get("/authors/book/:book", async (request, response) => {
 // Body     - none
 
 OurApp.get("/publication", async (request, response) => {
-    const getAllPublication = await Publication.find();
+    const getAllPublication = await PublicationModel.find();
     return response.json(getAllPublication);
 });
 
@@ -173,7 +171,7 @@ OurApp.get("/publication", async (request, response) => {
 // Body     - none
 
 OurApp.get("/publication/pub/:pub_", async (request, response) => {
-    const getSpecificPublication = await Publication.findOne({id: parseInt(request.params.pub_)});
+    const getSpecificPublication = await PublicationModel.findOne({id: parseInt(request.params.pub_)});
 
     if (!getSpecificPublication) {
         return response.json({
@@ -192,7 +190,7 @@ OurApp.get("/publication/pub/:pub_", async (request, response) => {
 // Body     - none
 
 OurApp.get("/publication/book/:book_", async (request, response) => {
-    const getSpecificPublication = await Publication.findOne({books: request.params.book_});
+    const getSpecificPublication = await PublicationModel.findOne({books: request.params.book_});
 
     if (!getSpecificPublication) {
         return response.json({
@@ -216,7 +214,7 @@ OurApp.post("/book/new", (request, response) => {
     try {
         const { newBook } = request.body;
 
-        Book.create(newBook);
+        BookModel.create(newBook);
         return response.json({ message: "Book added to the database" });
     }
     catch(error) {
@@ -235,7 +233,7 @@ OurApp.post("/authors/new", (request, response) => {
     try {
         const { newAuthor } = request.body;
 
-        Author.create(newAuthor);
+        AuthorModel.create(newAuthor);
         return response.json({ message: "Author added to the database" });
     }
     catch(error) {
@@ -254,7 +252,7 @@ OurApp.post("/publication/new", (request, response) => {
     try {
         const { newPublication } = request.body;
 
-        Publication.create(newPublication);
+        PublicationModel.create(newPublication);
         return response.json({ message: "Publication added to the database" });
     }
     catch(error) {
@@ -272,7 +270,7 @@ OurApp.post("/publication/new", (request, response) => {
 // Body     - { title: newTtile }
 
 OurApp.put("/book/update/:isbn", async (request, response) => {
-    const updatedBook = await Book.findOneAndUpdate(
+    const updatedBook = await BookModel.findOneAndUpdate(
         { ISBN: request.params.isbn },
         { title: request.body.title },
         { new: true }
@@ -289,13 +287,13 @@ OurApp.put("/book/update/:isbn", async (request, response) => {
 // Body     - { "newAuthor": id }
 
 OurApp.put("/book/updateAuthour/:isbn", async (request, response) => {
-    const updatedBook = await Book.findOneAndUpdate(
+    const updatedBook = await BookModel.findOneAndUpdate(
         { ISBN: request.params.isbn },
         { $addToSet: { authors: request.body.newAuthor } },
         { new: true }
     );
 
-    const updatedAuthor = await Author.findOneAndUpdate(
+    const updatedAuthor = await AuthorModel.findOneAndUpdate(
         { id: request.body.newAuthor },
         { $addToSet: { books: request.params.isbn } },
         { new: true }
@@ -312,7 +310,7 @@ OurApp.put("/book/updateAuthour/:isbn", async (request, response) => {
 // Body     - { "name": { newName } }
 
 OurApp.put("/authors/update/:id", async (request, response) => {
-    const updatedAuthor = await Author.findOneAndUpdate(
+    const updatedAuthor = await AuthorModel.findOneAndUpdate(
         { id: parseInt(request.params.id) },
         { name: request.body.name },
         { new: true }
@@ -329,7 +327,7 @@ OurApp.put("/authors/update/:id", async (request, response) => {
 // Body     - { "name": { newName } }
 
 OurApp.put("/publication/update/:id", async (request, response) => {
-    const updatedPublication = await Publication.findOneAndUpdate(
+    const updatedPublication = await PublicationModel.findOneAndUpdate(
         { id: parseInt(request.params.id) },
         { name: request.body.name },
         { new: true }
@@ -346,13 +344,13 @@ OurApp.put("/publication/update/:id", async (request, response) => {
 // Body     - { "book": ISBN }
 
 OurApp.put("/publication/updateBook/:id", async (request, response) => {
-    const updatedPublication = await Publication.findOneAndUpdate(
+    const updatedPublication = await PublicationModel.findOneAndUpdate(
         { id: parseInt(request.params.id) },
         { $addToSet: { books: request.body.book } },
         { new: true }
     );
     
-    const updatedBook = await Book.findOneAndUpdate(
+    const updatedBook = await BookModel.findOneAndUpdate(
         { ISBN: request.body.book },
         { publication: parseInt(request.params.id) },
         { new: true }
@@ -370,29 +368,12 @@ OurApp.put("/publication/updateBook/:id", async (request, response) => {
 // Params   - bookID
 // Body     - none
 
-OurApp.delete("/book/deleteBook/:BookID", (request, response) => {
-    
-    const isbn = request.params.BookID;
+OurApp.delete("/book/deleteBook/:BookID", async (request, response) => {
+    const updatedBook = await BookModel.findOneAndDelete( 
+        { ISBN: request.params.BookID }
+    );
 
-    Database.Book = Database.Book.filter((book) => {
-        return book.ISBN !== isbn;
-    });
-
-    Database.Author.map((author) => {
-        if (author.books.includes(isbn)) {
-            const index = author.books.indexOf(isbn)
-            author.books.splice(index, 1);
-        }
-    });
-
-    Database.Publication.map((pub) => {
-        if (pub.books.includes(isbn)) {
-            const index = pub.books.indexOf(isbn);
-            pub.books.splice(index, 1);
-        }
-    });
-
-    response.json({ book: Database.Book, author: Database.Author, publication: Database.Publication });
+    return response.json({ books: updatedBook });
 });
 
 // Route    - /book/deleteAuthor/:BookID/:authorID
@@ -402,29 +383,23 @@ OurApp.delete("/book/deleteBook/:BookID", (request, response) => {
 // Params   - bookID, authorID
 // Body     - none
 
-OurApp.delete("/book/deleteAuthor/:BookID/:authorID", (request, response) => {
+OurApp.delete("/book/deleteAuthor/:BookID/:authorID", async (request, response) => {
     const isbn = request.params.BookID;
     const author_ = parseInt(request.params.authorID);
 
-    Database.Book.map((book) => {
-        if (book.ISBN === isbn) {
-            if (book.authors.includes(author_)) {
-                const index = book.authors.indexOf(author_);
-                book.authors.splice(index, 1);
-            }
-        }
-    });
+    const updatedBook = await BookModel.findOneAndUpdate(
+        { ISBN: isbn },
+        { $pull: { authors: author_ } },
+        { new: true }
+    );
 
-    Database.Author.map((author) => {
-        if (author.id === author_) {
-            if (author.books.includes(isbn)) {
-                const index = author.books.indexOf(isbn);
-                author.books.splice(index, 1);
-            }
-        }
-    });
+    const updatedAuthor = await AuthorModel.findOneAndUpdate(
+        { id: author_ },
+        { $pull: { books: isbn } },
+        { new: true }
+    );
 
-    response.json({ book: Database.Book, author: Database.Author });
+    return response.json({ book: updatedBook, author: updatedAuthor });
 });
 
 // Route    - /author/delete/:authorID
@@ -434,21 +409,12 @@ OurApp.delete("/book/deleteAuthor/:BookID/:authorID", (request, response) => {
 // Params   - authorID
 // Body     - none
 
-OurApp.delete("/author/delete/:authorID", (request, response) => {
-    const id = parseInt(request.params.authorID);
+OurApp.delete("/author/delete/:authorID", async (request, response) => {
+    const updatedAuthor = await AuthorModel.findOneAndDelete( 
+        { id: parseInt(request.params.authorID) }
+    );
 
-    Database.Author = Database.Author.filter((author) => {
-        return author.id !== id;
-    });
-
-    Database.Book.map((book) => {
-        if (book.authors.includes(id)) {
-            const index = book.authors.indexOf(id);
-            book.authors.splice(index, 1);
-        }
-    });
-
-    response.json({ author: Database.Author, book: Database.Book });
+    return response.json({ authros: updatedAuthor });
 });
 
 // Route    - /publication/delete/:publicationId
@@ -458,20 +424,12 @@ OurApp.delete("/author/delete/:authorID", (request, response) => {
 // Params   - publicationID
 // Body     - none
 
-OurApp.delete("/publication/delete/:publicationId", (request, response) => {
-    const id = parseInt(request.params.publicationId);
+OurApp.delete("/publication/delete/:publicationId", async (request, response) => {
+    const updatedPublication = await PublicationModel.findOneAndDelete( 
+        { id: parseInt(request.params.publicationId) }
+    );
 
-    Database.Publication = Database.Publication.filter((pub) => {
-        return pub.id !== id;
-    });
-
-    Database.Book.map((book) => {
-        if (book.publication === id) {
-            book.publication = -1;
-        }
-    });
-
-    response.json({ publication: Database.Publication, book: Database.Book });
+    return response.json({ publications: updatedPublication });
 });
 
 // Route    - /publication/deleteBook/:publicationId/:bookId
@@ -481,28 +439,23 @@ OurApp.delete("/publication/delete/:publicationId", (request, response) => {
 // Params   - publicationID, bookID
 // Body     - none
 
-OurApp.delete("/publication/deleteBook/:publicationId/:bookId", (request, response) => {
+OurApp.delete("/publication/deleteBook/:publicationId/:bookId", async (request, response) => {
     const id = parseInt(request.params.publicationId);
     const isbn = request.params.bookId;
 
-    Database.Publication.map((pub) => {
-        if (pub.id === id) {
-            if (pub.books.includes(isbn)) {
-                const index = pub.books.indexOf(isbn);
-                pub.books.splice(isbn, 1);
-            }
-        }
-    });
+    const updatedPublication = await PublicationModel.findOneAndUpdate(
+        { id: id },
+        { $pull: { books: isbn } },
+        { new: true }
+    );
 
-    Database.Book.map((book) => {
-        if (book.ISBN === isbn) {
-            if (book.publication === id) {
-                book.publication = -1;
-            }
-        }
-    });
+    const updatedBook = await BookModel.findOneAndUpdate(
+        { ISBN: isbn },
+        { publication: -1 },
+        { new: true }
+    );
 
-    response.json({ publication: Database.Publication, book: Database.Book })
+    response.json({ publication: updatedPublication, book: updatedBook })
 });
 
 // Hosting
