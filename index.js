@@ -8,9 +8,6 @@ const Book = require("./API/book");
 const Author = require("./API/author");
 const Publication = require("./API/publication");
 
-// Import database
-const Database = require("./database");
-
 // Connecting Mongoose
 mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
