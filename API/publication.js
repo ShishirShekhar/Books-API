@@ -13,7 +13,7 @@ const PublicationModel = require("../schema/publication");
 // Params   - none
 // Body     - none
 
-Router.get("/publication", async (request, response) => {
+Router.get("/", async (request, response) => {
     const getAllPublication = await PublicationModel.find();
     return response.json(getAllPublication);
 });
@@ -25,7 +25,7 @@ Router.get("/publication", async (request, response) => {
 // Params   - publication
 // Body     - none
 
-Router.get("/publication/pub/:pub_", async (request, response) => {
+Router.get("/pub/:pub_", async (request, response) => {
     const getSpecificPublication = await PublicationModel.findOne({id: parseInt(request.params.pub_)});
 
     if (!getSpecificPublication) {
@@ -44,7 +44,7 @@ Router.get("/publication/pub/:pub_", async (request, response) => {
 // Params   - book
 // Body     - none
 
-Router.get("/publication/book/:book_", async (request, response) => {
+Router.get("/book/:book_", async (request, response) => {
     const getSpecificPublication = await PublicationModel.findOne({books: request.params.book_});
 
     if (!getSpecificPublication) {
@@ -66,7 +66,7 @@ Router.get("/publication/book/:book_", async (request, response) => {
 // Params   - none
 // Body     - { newPublication: { details } }
 
-Router.post("/publication/new", (request, response) => {
+Router.post("/new", (request, response) => {
     try {
         const { newPublication } = request.body;
 
@@ -88,7 +88,7 @@ Router.post("/publication/new", (request, response) => {
 // Params   - id
 // Body     - { "name": { newName } }
 
-Router.put("/publication/update/:id", async (request, response) => {
+Router.put("/update/:id", async (request, response) => {
     const updatedPublication = await PublicationModel.findOneAndUpdate(
         { id: parseInt(request.params.id) },
         { name: request.body.name },
@@ -105,7 +105,7 @@ Router.put("/publication/update/:id", async (request, response) => {
 // Params   - id
 // Body     - { "book": ISBN }
 
-Router.put("/publication/updateBook/:id", async (request, response) => {
+Router.put("/updateBook/:id", async (request, response) => {
     const updatedPublication = await PublicationModel.findOneAndUpdate(
         { id: parseInt(request.params.id) },
         { $addToSet: { books: request.body.book } },
@@ -131,7 +131,7 @@ Router.put("/publication/updateBook/:id", async (request, response) => {
 // Params   - publicationID
 // Body     - none
 
-Router.delete("/publication/delete/:publicationId", async (request, response) => {
+Router.delete("/delete/:publicationId", async (request, response) => {
     const updatedPublication = await PublicationModel.findOneAndDelete( 
         { id: parseInt(request.params.publicationId) }
     );
@@ -146,7 +146,7 @@ Router.delete("/publication/delete/:publicationId", async (request, response) =>
 // Params   - publicationID, bookID
 // Body     - none
 
-Router.delete("/publication/deleteBook/:publicationId/:bookId", async (request, response) => {
+Router.delete("/deleteBook/:publicationId/:bookId", async (request, response) => {
     const id = parseInt(request.params.publicationId);
     const isbn = request.params.bookId;
 

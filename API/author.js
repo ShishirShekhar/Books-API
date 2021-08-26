@@ -12,7 +12,7 @@ const AuthorModel = require("../schema/author");
 // Params   - none
 // Body     - none
 
-Router.get("/author", async (request, response) => {
+Router.get("/", async (request, response) => {
     const getAllAuthors = await AuthorModel.find();
     return response.json(getAllAuthors);
 });
@@ -24,7 +24,7 @@ Router.get("/author", async (request, response) => {
 // Params   - author
 // Body     - none
 
-Router.get("/author/aut/:author_", async (request, response) => {
+Router.get("/aut/:author_", async (request, response) => {
     const getSpecificAuthor = await AuthorModel.findOne({id: parseInt(request.params.author_)});
 
     if (!getSpecificAuthor) {
@@ -43,7 +43,7 @@ Router.get("/author/aut/:author_", async (request, response) => {
 // Params   - author
 // Body     - none
 
-Router.get("/author/book/:book", async (request, response) => {
+Router.get("/book/:book", async (request, response) => {
     const getSpecificAuthor = await AuthorModel.findOne({books: request.params.book});
 
     if (!getSpecificAuthor) {
@@ -65,7 +65,7 @@ Router.get("/author/book/:book", async (request, response) => {
 // Params   - none
 // Body     - { newAuthor: { details } }
 
-Router.post("/author/new", (request, response) => {
+Router.post("/new", (request, response) => {
     try {
         const { newAuthor } = request.body;
 
@@ -87,7 +87,7 @@ Router.post("/author/new", (request, response) => {
 // Params   - id
 // Body     - { "name": { newName } }
 
-Router.put("/author/update/:id", async (request, response) => {
+Router.put("/update/:id", async (request, response) => {
     const updatedAuthor = await AuthorModel.findOneAndUpdate(
         { id: parseInt(request.params.id) },
         { name: request.body.name },
@@ -107,7 +107,7 @@ Router.put("/author/update/:id", async (request, response) => {
 // Params   - authorID
 // Body     - none
 
-Router.delete("/author/delete/:authorID", async (request, response) => {
+Router.delete("/delete/:authorID", async (request, response) => {
     const updatedAuthor = await AuthorModel.findOneAndDelete( 
         { id: parseInt(request.params.authorID) }
     );
