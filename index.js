@@ -33,4 +33,4 @@ OurApp.get("/", (request, response) => {
 });
 
 // Hosting
-OurApp.listen(5000, () => console.log("Server is running"));
+OurApp.listen(process.env.PORT || 3000, () => console.log("Server is running"));
